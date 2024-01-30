@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="/eme/bootstrap.min.css" rel="stylesheet" >
-    <link href="/eme/Navbar.css" rel="stylesheet" >
+    <link href="/css/bootstrap.min.css" rel="stylesheet" >
+    <link href="/css/Navbar.css" rel="stylesheet" >
     <script defer src="/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -14,7 +14,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="Navbar.html"><img src="./pic/Logo.png" alt="logo"
+            <a class="navbar-brand" href="Navbar.html"><img src="/pics/Logo.png" alt="logo"
                     style="height: 10vh; width: auto;"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -346,7 +346,7 @@
         </div>
         <div class="total-section">
             <p id="overall-total">Total: ₱0.00</p>
-            <a href="/Checkout" class="checkout-btn"><button>Checkout</button></a>
+            <a href="Checkout.blade.php" class="checkout-btn"><button>Checkout</button></a>
         </div>
     </section>  
 
