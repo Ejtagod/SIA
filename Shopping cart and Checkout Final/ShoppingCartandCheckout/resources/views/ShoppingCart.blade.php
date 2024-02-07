@@ -73,7 +73,7 @@
         </div>
     </section>
 
-    <form id="cart-form" action="" method="post">
+    <form id="cart-form" action="{{ route('checkout') }}" method="get">
         <section id="cart-container" class="ctn">
             <table width="100%">
                 <thead>
@@ -95,7 +95,7 @@
                     <!-- Inside each table row -->
                     @foreach($products as $product)
                     <tr class="product-row">
-                        <td><input type="checkbox" id="select_{{ $product->product_id }}"></td>
+                        <td><input type="checkbox" id="select_{{ $product->product_id }}" name="selected[{{ $product->product_id }}]"></td>
                         <td class="product-info">
                             <div class="d-flex align-items-center">
                                 <img src="/pics/tumbs.jpg" alt="Product Image" class="img-fluid me-2" style="max-width: 50%;">
@@ -135,19 +135,19 @@
                 </tbody>
             </table>
         </section>
-    </form>
 
-    <section class="cart-bottom">
-        <div>
-            <input type="checkbox" id="selectAllCheckbox" onchange="selectAllProducts()">
-            <label for="selectAllCheckbox" style="font-size: large; font-weight: bold; margin-left: 20px">Select All</label>
-        </div>
-        <div class="total-section">
-            <p id="overall-total">Total ₱: 0.00</p>
-            <a href="/Checkout" class="checkout-btn"><button>Checkout</button></a>
-            <a href="{{route('product')}}" class="continueshopping-btn"><button>Continue Shopping</button></a>
-        </div>
-    </section>
+        <section class="cart-bottom">
+            <div>
+                <input type="checkbox" id="selectAllCheckbox" onchange="selectAllProducts()">
+                <label for="selectAllCheckbox" style="font-size: large; font-weight: bold; margin-left: 20px">Select All</label>
+            </div>
+            <div class="total-section">
+                <p id="overall-total">Total ₱: 0.00</p>
+                <button type="submit" class="checkout-btn">Checkout</button>
+                <a href="{{route('product')}}" class="continueshopping-btn"><button>Continue Shopping</button></a>
+            </div>
+        </section>
+    </form>
 
     <section class="footer">
         <h4>ABOUT US</h4>

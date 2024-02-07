@@ -27,7 +27,5 @@ Route::get('/add-to-cart/{product_id}', [ProductController::class, 'addToCart'])
     ->name('add-cart');
 Route::get('/remove/{id}', [ProductController::class, 'removeFromCart'])
     ->name('remove');
-
-Route::get('/Checkout', function (){
-    return view('Checkout');
-});
+Route::get('/Checkout', [ProductController::class, 'Checkout'])
+    ->name('checkout');

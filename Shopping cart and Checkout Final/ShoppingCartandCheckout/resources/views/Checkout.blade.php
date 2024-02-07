@@ -85,35 +85,37 @@
                         <td>Item Subtotal</td>
                     </tr>
                 </thead>
+                @php $pieces = 0; $total_subtotal = 0 @endphp
                 <tbody>
-
+                    @foreach($products as $product)
                     <tr>
                         <td>
-
+                            {{ $product->product->product_name }}
                         </td>
                         <td>
-
+                            ₱{{ $product->product->price }}
                         </td>
                         <td>
-
+                            {{ $product->quantity }}
                         </td>
                         <td>
-
+                            ₱{{ $product->product->price * $product->quantity }}
                         </td>
                     </tr>
+                    @php $pieces += $product->quantity; $total_subtotal += ($product->product->price * $product->quantity); @endphp
+                    @endforeach
+
                     <tr>
                         <td colspan="3">
-                            <br><br><br><br><br>
                             <hr style="width: 1380px;">
-                            Order Total (5 Item/s):
+                            Order Total ({{ $pieces }} Item/s):
                         </td>
                         <td>
-                            <br><br><br><br><br><br>
-                            ₱250.00
+                            <br>
+                            ₱{{ $total_subtotal }}
                         </td>
 
                     </tr>
-
                 </tbody>
             </table>
         </section>

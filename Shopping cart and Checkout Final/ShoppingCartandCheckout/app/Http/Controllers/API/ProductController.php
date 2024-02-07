@@ -16,58 +16,32 @@ class ProductController extends Controller
 
     public function ShoppingCart() {
         $products = Cart_Product::where('user_id', 1)->get();
-//        dd($products[0]->product);
         return view('ShoppingCart', [
             'products' => $products,
         ]);
     }
 
-/*    public function addToCart(Product $product) {
-        $ShoppingCart = session()->get('ShoppingCart');
-
-        if(!$ShoppingCart) {
-            $ShoppingCart = [
-                $product->product_id =>[
-                    'product_name'      => $product->product_name,
-                    'quantity'          => 1,
-                    'price'             => $product->price,
-                ]
-            ];
-
-            session()->put('ShoppingCart', $ShoppingCart);
-            return redirect()->route('ShoppingCart')->with('success', "Added to Cart");
-        }
-
-        if(isset($ShoppingCart[$product->product_id])) {
-            $ShoppingCart[$product->product_id]['quantity']++;
-            session()->put('ShoppingCart', $ShoppingCart);
-            return redirect()->route('ShoppingCart')->with('success', "Added to Cart");
-        }
-
-        $ShoppingCart[$product->product_id] = [
-            'product_name'      => $product->product_name,
-            'quantity'          => 1,
-            'price'             => $product->price,
-        ];
-
-        session()->put('ShoppingCart', $ShoppingCart);
-
-        return redirect()->route('ShoppingCart')->with('success', "Added to Cart");
-    }*/
-
     public function addToCart(Request $request) {
-//        dd($request->product_id);
+        // Paki-improve pa to. If same item lang ang added to cart, dapat add quantity lang siya.
         $new_product = new Cart_Product;
         $new_product->user_id = 1;
         $new_product->product_id = $request->product_id;
         $new_product->quantity = 1;
         $new_product->save();
         $products = Cart_Product::where('user_id', 1)->get();
-//        dd($products);
-//        return redirect(route('ShoppingCart', $products));
     }
 
     public function removeFromCart($product_id) {
 
+    }
+
+    public function Checkout(Request $request) {
+//        dd($request->selected);
+        if($request->selected === null) return back()->with('Error', 'Please select at least one item to check out.');
+        $products = Cart_Product::whereIn('product_id', array_keys($request->selected))->get();
+//        dd($products);
+        return view('Checkout', [
+            'products' => $products
+        ]);
     }
 }
