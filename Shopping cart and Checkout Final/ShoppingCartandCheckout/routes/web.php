@@ -15,11 +15,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', function() {
+    return redirect('product');
+});
 
-Route::get('/product', [ProductController::class, 'index'])->name('product');
-Route::get('/ShoppingCart', [ProductController::class, 'ShoppingCart'])->name('ShoppingCart');
-Route::get('/add-to-cart/{product}', [ProductController::class, 'addToCart'])->name('add-cart');
-Route::get('/remove/{id}', [ProductController::class, 'removeFromCart'])->name('remove');
+Route::get('/product', [ProductController::class, 'index'])
+    ->name('product');
+Route::get('/ShoppingCart', [ProductController::class, 'ShoppingCart'])
+    ->name('ShoppingCart');
+Route::get('/add-to-cart/{product_id}', [ProductController::class, 'addToCart'])
+    ->name('add-cart');
+Route::get('/remove/{id}', [ProductController::class, 'removeFromCart'])
+    ->name('remove');
 
 Route::get('/Checkout', function (){
     return view('Checkout');

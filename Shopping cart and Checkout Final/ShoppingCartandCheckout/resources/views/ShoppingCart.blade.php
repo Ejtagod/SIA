@@ -21,7 +21,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="Navbar.html">HOME</a>
+                        <a class="nav-link active" aria-current="page" href="#">HOME</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="#">PRODUCTS</a>
@@ -88,24 +88,18 @@
                         <td>Actions</td>
                     </tr>
                 </thead>
+                @php
+                    $total = 0;
+                @endphp
                 <tbody>
                     <!-- Inside each table row -->
-                    @php 
-                        $total = 0;
-                    @endphp
-                    @if(session('ShoppingCart'))
-                    @foreach(session('ShoppingCart') as $product_id => $product)
-                        @php
-                            $sub_total = $product['price'] * $product['quantity'];
-                            $total += $sub_total;
-                        @endphp
-
+                    @foreach($products as $product)
                     <tr class="product-row">
-                        <td><input type="checkbox"></td>
+                        <td><input type="checkbox" id="select_{{ $product->product_id }}"></td>
                         <td class="product-info">
                             <div class="d-flex align-items-center">
                                 <img src="/pics/tumbs.jpg" alt="Product Image" class="img-fluid me-2" style="max-width: 50%;">
-                                <h5>{{$product['product_name']}}</h5>
+                                <h5>{{$product->product['product_name']}}</h5>
                             </div>
                         </td>
                         <td class="variation-dropdown">
@@ -124,14 +118,13 @@
                         </td>
                         <td class="selected-variation">Selected Variation: -</td>
                         <td class="unit-price">
-                            <h5>₱{{$product['price']}}</h5>
-                            <input readonly hidden value="₱{{$product['price']}}">
+                            <h5>₱{{$product->product['price']}}</h5>
                         </td>
                         <td class="quantity-controls">
                             <h5>{{$product['quantity']}}</h5>
                         </td>
                         <td class="amount">
-                            <h5>₱{{$sub_total}}</h5>
+                            <h5 id="amount_{{ $product->product_id }}">₱{{ $product->product->price * $product->quantity }}</h5>
                         </td>
                         <td>
                             <h5 class="deleteBtn">Delete</h5>
@@ -139,7 +132,6 @@
                         <!-- Add more elements as needed -->
                     </tr>
                     @endforeach
-                    @endif
                 </tbody>
             </table>
         </section>
@@ -148,12 +140,11 @@
     <section class="cart-bottom">
         <div>
             <input type="checkbox" id="selectAllCheckbox" onchange="selectAllProducts()">
-            <h1>Select All</h1>
+            <label for="selectAllCheckbox" style="font-size: large; font-weight: bold; margin-left: 20px">Select All</label>
         </div>
         <div class="total-section">
-            <p id="overall-total">Total ₱:{{ $total}}</p>
-            <!-- <a href="/Checkout" class="checkout-btn"><button>Checkout</button></a> -->
-            <button type="submit" class="checkout-btn" >Checkout</button>
+            <p id="overall-total">Total ₱: 0.00</p>
+            <a href="/Checkout" class="checkout-btn"><button>Checkout</button></a>
             <a href="{{route('product')}}" class="continueshopping-btn"><button>Continue Shopping</button></a>
         </div>
     </section>
@@ -172,89 +163,34 @@
     </section>
 
     <script>
-        
+        // Get all checkbox elements with the class 'myCheckbox'
+        let total_price = 0;
+        let overall_total = document.getElementById('overall-total');
+        const selectAll = document.getElementById('selectAllCheckbox');
+        const checkboxes = document.querySelectorAll('[id^="select_"]');
 
-            // Add a click event listener to each delete button
-            deleteButtons.forEach(function(button, index) {
-                button.addEventListener('click', function() {
-                    // Get the parent row of the clicked button
-                    var row = this.closest('tr');
-
-                    // Check if the checkbox in the row is checked
-                    var checkbox = itemCheckboxes[index];
-                    if (checkbox.checked) {
-                        // Get the amount of the deleted row
-                        var deletedAmount = parseFloat(amount[index].textContent.replace('₱', ''));
-
-                        // Remove the entire row from the table
-                        row.remove();
-
-                        // Update the overall total after deletion
-                        updateTotalAmount(deletedAmount);
-                    }
-                });
+        // Loop through each checkbox and attach event listener
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function(event) {
+                // Check if the checkbox is checked
+                if (event.target.checked) {
+                    const lastChar = checkbox.id.charAt(checkbox.id.length - 1);
+                    const amount = parseInt(document.getElementById('amount_'+lastChar).textContent.slice(1));
+                    total_price += amount;
+                } else {
+                    const lastChar = checkbox.id.charAt(checkbox.id.length - 1);
+                    const amount = parseInt(document.getElementById('amount_'+lastChar).textContent.slice(1));
+                    total_price -= amount;
+                }
+                overall_total.textContent = 'Total ₱: ' + parseFloat(total_price).toFixed(2);
             });
+        });
 
-
-        function selectVariation(element, variation) {
-            // Get the parent row of the clicked dropdown item
-            var row = element.closest('.product-row');
-
-            // Update the selected variation for this row only
-            var selectedVariationElement = row.querySelector('.selected-variation');
-            if (selectedVariationElement) {
-                selectedVariationElement.textContent = 'Selected Variation: ' + variation;
-            }
-        }
-
-
-
-        function updateRowElements(row, variation) {
-            // Get the elements within the row and update their content
-            row.querySelector('.selected-variation').textContent = 'Selected Variation: ' + variation;
-            row.querySelector('.price').textContent = 'Price: ₱50.00'; // Update with the actual price for the variation
-            // Add more elements to update as needed
-        }
-
-        function selectAllProducts() {
-            var checkboxes = document.querySelectorAll('.product-row input[type="checkbox"]');
-            var total = 0;
-
+        selectAll.addEventListener('change', function(event) {
             checkboxes.forEach(function(checkbox) {
-                checkbox.checked = document.getElementById('selectAllCheckbox').checked;
-                updateTotal();
-            });
-        }
-
-
-        // Attach onchange event to each product checkbox and quantity input
-        var productCheckboxes = document.querySelectorAll('.product-row input[type="checkbox"]');
-        productCheckboxes.forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                updateTotal();
-            });
-        });
-
-        var quantityInputs = document.querySelectorAll('.product-row .quantity-input');
-        quantityInputs.forEach(function(input) {
-            input.addEventListener('input', function() {
-                updateTotal();
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... Existing JavaScript ...
-
-            // Add an event listener to the form for dynamic updates
-            var cartForm = document.querySelector('#cart-form');
-            if (cartForm) {
-                cartForm.addEventListener('submit', function() {
-                    // Add any additional logic here if needed
-
-                    // Submit the form
-                    this.submit();
-                });
-            }
+                checkbox.checked = !!event.target.checked;
+                checkbox.dispatchEvent(new Event('change'));
+            })
         });
     </script>
 
